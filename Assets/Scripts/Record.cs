@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class Record : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [System.Serializable]
+    public class InventoryData
     {
-        
-    }
+        public SlotData[] slots;
+    };
 
-    // Update is called once per frame
-    void Update()
+    [System.Serializable]
+    public class SlotData
     {
-        
+        public ItemType itemType = ItemType.Nothing;
+        public int itemCount = 0;
     }
 }

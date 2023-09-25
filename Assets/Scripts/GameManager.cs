@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +23,23 @@ public class GameManager : MonoBehaviour
         {
             inventorySlots.Add((RectTransform)inventoryTransform.GetChild(i)); //Finds the inventory slot objects
             inventory.Add(ItemType.Nothing); //Inventory starts empty
+        }
+        string path = Application.persistentDataPath + "/Inventory.json"; //Would be preferable to keep data in a harder to dit by user file
+        if (File.Exists(path))
+        {
+            Record.InventoryData inventoryData = JsonUtility.FromJson<Record.InventoryData>(File.ReadAllText(path));
+            for (int i = 0; i < inventoryTransform.childCount; i++)
+            {
+                inventory[i] = inventoryData.slots[i].itemType;
+                inventoryCount[i] = inventoryData.slots[i].itemCount;
+                if (inventoryCount[i] > 1)
+                    inventorySlots[i].GetChild(0).GetComponent<TMP_Text>().text = inventoryCount[i].ToString();
+                if (inventory[i] != ItemType.Nothing)
+                {
+                    inventoryIcons[i] = Instantiate<RectTransform>(itemPrefabs[(int)inventory[i]]);
+                    inventoryIcons[i].SetParent(inventorySlots[i], false);
+                }
+            }
         }
         for (int i = 0; i < 3; i++)
             SpawnMonster();
@@ -83,5 +101,20 @@ public class GameManager : MonoBehaviour
     {
         Monster monster = Instantiate<Monster>(monsterPrefab); //Spwans monster
         monster.transform.position = new Vector3(Random.Range(5f, 10f), Random.Range(-5f, 5f)); //Puts monster at random location to the right of the player
+    }
+
+    public void Save() //Call saving with a button for testing purposes
+    {
+        Transform inventoryTransform = GameObject.Find("Inventory").transform;
+        Record.InventoryData inventoryData = new Record.InventoryData();
+        inventoryData.slots = new Record.SlotData[inventoryTransform.childCount];
+        for (int i = 0; i < inventoryTransform.childCount; i++)
+        {
+            inventoryData.slots[i] = new Record.SlotData();
+            inventoryData.slots[i].itemCount = inventoryCount[i];
+            inventoryData.slots[i].itemType = inventory[i];
+        }
+        string path = Application.persistentDataPath + "/Inventory.json"; //Would be preferable to keep data in a harder to dit by user file
+        File.WriteAllText(path, JsonUtility.ToJson(inventoryData));
     }
 }
