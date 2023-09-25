@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum ItemType
@@ -14,6 +12,7 @@ public enum ItemType
 public class Item : MonoBehaviour
 {
     public ItemType type;
+    public RectTransform icon; //A list of ItemType to inventory icon would be preferable
 
     private GameManager manager;
     // Start is called before the first frame update
@@ -27,7 +26,7 @@ public class Item : MonoBehaviour
         if (collision.tag == "Player")
         {
             bool isItemPickedup;
-            manager.AddItem(type, out isItemPickedup);
+            manager.AddItem(this, out isItemPickedup);
             if (isItemPickedup) //Checks if item was added to inventory
                 Destroy(gameObject); //Removes item
         }

@@ -201,12 +201,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 50
   speed: 8
-  attackCooldown: 3
   attackDamage: 10
+  attackCooldown: 3
   attackRange: 1
   monsterPrefabs:
-  - {fileID: 4442800491532825748, guid: 364cee19a1258df469a62c75bb8c1ef6, type: 3}
-  - {fileID: 1153180505726832872, guid: c23cc48016b023b41a6bab6a40999172, type: 3}
+  - {fileID: 2452754132927485489, guid: 01ad9a39785f3344db996c06082f4e7b, type: 3}
+  - {fileID: 331646639447788200, guid: feca31d557edcac4da30b7bb2c31d13c, type: 3}
   itemDrops:
   - {fileID: 8980558498934868005, guid: ab3916d1ca154954680fd97dbb1f921d, type: 3}
   - {fileID: 4994638347081281479, guid: 5b555bedb74286b45a594bd95181142b, type: 3}
