@@ -10,29 +10,16 @@ public enum MonsterType
 
 public class Monster : Character
 {
-    public float attackCooldown = 3;
-    public float attackDamage = 10;
     public float attackRange = 1;
     public Transform[] monsterPrefabs = new Transform[2];
     public Item[] itemDrops = new Item[3];
 
-    private bool canAttack = true;
     private Transform sprite;
-    // Start is called before the first frame update
-    protected override void Start()
+    public Vector3 PlayerDistance { get; set; } = Vector3.zero;
+
+    private void Awake()
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    private void Awake() //Spwans graphics
-    {
-        sprite = Instantiate<Transform>(monsterPrefabs[Random.Range(0, 2)]);
+        sprite = Instantiate<Transform>(monsterPrefabs[Random.Range(0, 2)]); //Spwans graphics
         sprite.SetParent(transform, false);
     }
 
@@ -40,26 +27,37 @@ public class Monster : Character
     {
         if (collision.tag == "Player")
         {
-            Vector3 playerDistance = (collision.transform.position - transform.position); //Gets the distance to player to determine movement direction and attack availability
-            Move(playerDistance.normalized * speed * Time.deltaTime); //Over twice as slow with the same speed
-            if (playerDistance.magnitude <= attackRange && canAttack)
+            PlayerDistance = (collision.transform.position - transform.position); //Gets the distance to player to determine movement direction and attack availability
+            Move(PlayerDistance.normalized * speed * Time.deltaTime); //Over twice as slow with the same speed
+            if (PlayerDistance.magnitude <= attackRange && canAttack) //When in range and off cooldown
             {
-                StartCoroutine("Attack", collision.GetComponent<Player>());
+                StartCoroutine(Attack(collision.GetComponent<Player>())); //Attack player
             }
         }
     }
 
-    private IEnumerator Attack(Player player)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        player.Damage(attackDamage);
-        canAttack = false;
-        yield return new WaitForSeconds(attackCooldown);
-        canAttack = true;
+        if (collision.tag == "Player")
+        {
+            Player player = collision.GetComponent<Player>();
+            player.Targets.Add(this); //Add to target list for targeting shots
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "Player")
+        {
+            Player player = collision.GetComponent<Player>();
+            player.Targets.Remove(this); //Remove from target list
+            PlayerDistance = Vector3.zero;
+        }
     }
 
     protected override void Die()
     {
-        Item item = Instantiate<Item>(itemDrops[Random.Range(0, 3)]);
+        Item item = Instantiate<Item>(itemDrops[Random.Range(0, 3)]); //Item drop
         item.transform.position = transform.position;
         base.Die();
     }

@@ -4,10 +4,11 @@ using UnityEngine;
 
 public enum ItemType
 {
-    Nothing = -1,
+    Nothing = -1, //For empty inventory slots
     Makarov,
     AK,
-    Bulletproof
+    Bulletproof,
+    Helmet
 }
 
 public class Item : MonoBehaviour
@@ -21,18 +22,14 @@ public class Item : MonoBehaviour
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.name == "Player")
+        if (collision.tag == "Player")
         {
-            manager.AddItem(type);
-            Destroy(gameObject);
+            bool isItemPickedup;
+            manager.AddItem(type, out isItemPickedup);
+            if (isItemPickedup) //Checks if item was added to inventory
+                Destroy(gameObject); //Removes item
         }
     }
 }

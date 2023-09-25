@@ -6,6 +6,10 @@ public class Character : MonoBehaviour
 {
     public float maxHealth;
     public float speed;
+    public float attackDamage;
+    public float attackCooldown;
+
+    protected bool canAttack = true;
 
     private float health;
     // Start is called before the first frame update
@@ -41,5 +45,12 @@ public class Character : MonoBehaviour
     virtual protected void Die()
     {
         Destroy(gameObject);
+    }
+    protected IEnumerator Attack(Character target)
+    {
+        target.Damage(attackDamage);
+        canAttack = false; //Starts cooldown
+        yield return new WaitForSeconds(attackCooldown);
+        canAttack = true; //Ends cooldown
     }
 }
